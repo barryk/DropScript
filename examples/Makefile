@@ -3,37 +3,52 @@
 # Wilfredo Sanchez | wsanchez@opensource.apple.com
 ##
 
-INSTALL_DIR := $(shell grep 'INSTALL_PATH = ' ../DropScript.pbproj/project.pbxproj | \
-                       sed -e 's/.*INSTALL_PATH = \([^;]*\);.*/\1/' -e 's/^"\([^"]*\)"/\1/') #"
-SCRIPT_DIR   = Example Scripts
+# When invoked by XCode, these should be set
+ifndef BUILT_PRODUCTS_DIR
+BUILT_PRODUCTS_DIR := ../build
+endif
+ifndef INSTALL_PATH
+INSTALL_PATH := /tmp/dst
+endif
 
-SCRIPT_EXTS = *.sh
+DROP_SCRIPT = $(BUILT_PRODUCTS_DIR)/DropScript.app/Contents/Resources/drop_script
 
-SH_SCRIPTS := $(shell ls $(SCRIPT_EXTS))
-SCRIPTS     = $(SH_SCRIPTS)
+DROPLETS_DIR = Drop Applications
+EXAMPLES_DIR = Example Scripts
 
-DIRS = . Subversion Terminal #cvs-support
+#SH_SCRIPTS := $(find . -name '*.sh')
 
-DOCS = README
+#SCRIPTS = $(SH_SCRIPTS)
 
-.PHONY: all
+#DOCS = README
+
+.PHONY: all build
 all: $(SH_SCRIPTS)
-	mkdir -p "$(BUILT_PRODUCTS_DIR)/$(SCRIPT_DIR)";
-	for file in $(DOCS); do									\
-	  install -c -m 444 "$${file}" "$(BUILT_PRODUCTS_DIR)/$(SCRIPT_DIR)";			\
-	done
-	for dir in $(DIRS); do									\
-	  mkdir -p "$(BUILT_PRODUCTS_DIR)/$(SCRIPT_DIR)/$${dir}";				\
-	  for file in $$(cd "$${dir}" && ls $(SCRIPT_EXTS)); do					\
-	    install -c -m 555 "$${dir}/$${file}" "$(BUILT_PRODUCTS_DIR)/$(SCRIPT_DIR)/$${dir}";	\
-	  done;											\
-	done
+	rm -rf "$(BUILT_PRODUCTS_DIR)/$(EXAMPLES_DIR)" "$(BUILT_PRODUCTS_DIR)/$(DROPLETS_DIR)";
+	install -d -m 755 "$(BUILT_PRODUCTS_DIR)/$(EXAMPLES_DIR)" "$(BUILT_PRODUCTS_DIR)/$(DROPLETS_DIR)";
+	find . -type d \! -name . -prune \! -name .svn | {				\
+	  while read dir; do								\
+	    example_dst="$(BUILT_PRODUCTS_DIR)/$(EXAMPLES_DIR)/$${dir}";		\
+	    droplet_dst="$(BUILT_PRODUCTS_DIR)/$(DROPLETS_DIR)/$${dir}";		\
+	    install -d -m 755 "$${example_dst}" "$${droplet_dst}";			\
+	    find "$${dir}" \! \( -type d -name .svn -prune \) -type f -name '*.sh' | {	\
+	      while read file; do							\
+                install -c -m 555 "$${file}" "$${example_dst}/$$(basename "$${file}")"; \
+		file_dst="$${droplet_dst}/$$(basename "$${file}")";			\
+	        cp "$${file}" "$${file_dst}";						\
+		$(DROP_SCRIPT) "$${file_dst}";						\
+	        rm "$${file_dst}";							\
+	      done;									\
+	    }										\
+	  done;										\
+	}
+build: all
 
 .PHONY: clean
 clean:
-	rm -rf "$(BUILT_PRODUCTS_DIR)/$(SCRIPT_DIR)"
+	rm -rf "$(BUILT_PRODUCTS_DIR)/$(EXAMPLES_DIR)";
 
 .PHONY: install
 install: all
-	install -d "$(DSTROOT)$(INSTALL_DIR)/$(SCRIPT_DIR)"
-	cd "$(BUILT_PRODUCTS_DIR)" && pax -rw "$(SCRIPT_DIR)" "$(DSTROOT)$(INSTALL_DIR)"
+#	install -d "$(DSTROOT)$(INSTALL_PATH)/$(EXAMPLES_DIR)";
+#	cd "$(BUILT_PRODUCTS_DIR)" && pax -rw "$(EXAMPLES_DIR)" "$(DSTROOT)$(INSTALL_PATH)";
