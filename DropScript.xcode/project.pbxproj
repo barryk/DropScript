@@ -62,6 +62,8 @@
 		19C28FACFE9D520D11CA2CBB = {
 			children = (
 				8D1107320486CEB800E47090,
+				350CB6ED07EEC1670009953A,
+				350CB71207EEC1670009953A,
 			);
 			isa = PBXGroup;
 			name = Products;
@@ -200,6 +202,22 @@
 //352
 //353
 //354
+		350CB6ED07EEC1670009953A = {
+			isa = PBXFileReference;
+			lastKnownFileType = folder;
+			name = "Drop Applications";
+			path = "build/Drop Applications";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		350CB71207EEC1670009953A = {
+			isa = PBXFileReference;
+			lastKnownFileType = folder;
+			name = "Example Scripts";
+			path = "build/Example Scripts";
+			refType = 4;
+			sourceTree = "<group>";
+		};
 		352790FD07EE507C00201C3A = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -417,7 +435,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
+				INSTALL_PATH = /Applications/DropScript;
 				PRODUCT_NAME = DropScript;
 				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = app;
