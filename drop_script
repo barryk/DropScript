@@ -21,15 +21,15 @@ import shutil
 source_script = sys.argv[0]
 
 if len(sys.argv) != 2:
-        print os.path.split(source_script)[1] + " takes exactly one argument"
+        print "%s takes exactly one argument" % (os.path.basename(source_script))
         sys.exit(1)
 
 new_script  = sys.argv[1]
 
-source_app         = os.path.split(os.path.split(os.path.split(source_script)[0])[0])[0]
-source_name        = os.path.splitext(os.path.split(source_app)[1])[0]
-destination        = os.path.split(new_script)[0]
-base_name          = os.path.split(os.path.splitext(new_script)[0])[1]
+source_app         = os.path.dirname(os.path.dirname(os.path.dirname(source_script)))
+source_name        = os.path.splitext(os.path.basename(source_app))[0]
+destination        = os.path.dirname(new_script)
+base_name          = os.path.basename(os.path.splitext(new_script)[0])
 droplet_name       = "Drop" + base_name
 droplet_path       = os.path.join(destination, droplet_name + ".app")
 droplet_contents   = os.path.join(droplet_path, "Contents")
@@ -74,7 +74,7 @@ def parse_script_options(script_filename):
                         option = match.group(1)
                         value  = match.group(2)
 
-                        warning = source_script + ": WARNING: Invalid " + option + ": " + value
+                        warning = "%s: WARNING: Invalid %s: %s" % (source_script, option, value)
 
                         if option == "EXTENSIONS" or option == "OSTYPES":
                                 regex_extensions = re.compile(r'^("[^"]*")*' + regex_comment)
@@ -97,14 +97,14 @@ def parse_script_options(script_filename):
 
         script_file.close()
 
-        if not  (options.has_key("ROLE") and options["ROLE"]):
+        if not  ("ROLE" in options and options["ROLE"]):
                 options["ROLE"] = "Editor"
 
-        if not  (options.has_key("SERVICEMENU") and options["SERVICEMENU"]):
+        if not  ("SERVICEMENU" in options and options["SERVICEMENU"]):
                 options["SERVICEMENU"] = "DropScript/" + base_name
 
-        if not ((options.has_key("EXTENSIONS") and options["EXTENSIONS"]) or
-                        (options.has_key("OSTYPES"   ) and options["OSTYPES"   ])):
+        if not (("EXTENSIONS" in options and options["EXTENSIONS"]) or
+                ("OSTYPES"    in options and options["OSTYPES"   ])):
                 options["EXTENSIONS"] = '"*"'
                 options["OSTYPES"   ] = '"****"'
 
