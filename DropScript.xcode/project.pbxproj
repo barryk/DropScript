@@ -98,6 +98,7 @@
 				080E96DDFE201D6D7F000001,
 				29B97315FDCFA39411CA2CEA,
 				29B97317FDCFA39411CA2CEA,
+				3527910507EE517600201C3A,
 				29B97323FDCFA39411CA2CEA,
 				19C28FACFE9D520D11CA2CBB,
 			);
@@ -135,6 +136,7 @@
 				089C165CFE840E0CC02AAC07,
 				29B97318FDCFA39411CA2CEA,
 				35E5377C0646187D001AFFF1,
+				352790FD07EE507C00201C3A,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -198,6 +200,93 @@
 //352
 //353
 //354
+		352790FD07EE507C00201C3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.script.sh;
+			name = terminal;
+			path = tools/terminal;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		352790FE07EE507C00201C3A = {
+			fileRef = 352790FD07EE507C00201C3A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		3527910507EE517600201C3A = {
+			children = (
+				3527917207EE520900201C3A,
+				3527917107EE520900201C3A,
+				3527910907EE520800201C3A,
+				3527913807EE520800201C3A,
+				3527917307EE520900201C3A,
+				352791E807EE520900201C3A,
+			);
+			includeInIndex = 0;
+			isa = PBXGroup;
+			path = examples;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		3527910907EE520800201C3A = {
+			isa = PBXFileReference;
+			lastKnownFileType = folder;
+			path = "Archive and Compress";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		3527913807EE520800201C3A = {
+			isa = PBXFileReference;
+			lastKnownFileType = folder;
+			path = "CVS Support";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		3527917107EE520900201C3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.make;
+			path = Makefile;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		3527917207EE520900201C3A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			path = README;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		3527917307EE520900201C3A = {
+			isa = PBXFileReference;
+			lastKnownFileType = folder;
+			path = Subversion;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		352791E807EE520900201C3A = {
+			isa = PBXFileReference;
+			lastKnownFileType = folder;
+			path = Terminal;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		3527921F07EE53BB00201C3A = {
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C examples \"${ACTION}\"\n";
+		};
 		35E533610645C9E4001AFFF1 = {
 			isa = PBXFileReference;
 			lastKnownFileType = text.rtf;
@@ -320,6 +409,7 @@
 				8D1107290486CEB800E47090,
 				8D11072C0486CEB800E47090,
 				8D11072E0486CEB800E47090,
+				3527921F07EE53BB00201C3A,
 			);
 			buildRules = (
 			);
@@ -357,6 +447,7 @@
 				35E533630645C9E4001AFFF1,
 				35E533640645C9E4001AFFF1,
 				35E5377D0646187D001AFFF1,
+				352790FE07EE507C00201C3A,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
