@@ -21,8 +21,8 @@ import shutil
 source_script = sys.argv[0]
 
 if len(sys.argv) != 2:
-	print os.path.split(source_script)[1] + " takes exactly one argument"
-	sys.exit(1)
+        print os.path.split(source_script)[1] + " takes exactly one argument"
+        sys.exit(1)
 
 new_script  = sys.argv[1]
 
@@ -41,98 +41,98 @@ droplet_plist      = os.path.join(droplet_contents, "Info.plist")
 
 i = 0
 while (os.path.exists(droplet_path)):
-	i += 1
-	droplet_name = "Drop" + base_name + "-" + str(i)
-	droplet_path = os.path.join(destination, droplet_name + ".app")
+        i += 1
+        droplet_name = "Drop" + base_name + "-" + str(i)
+        droplet_path = os.path.join(destination, droplet_name + ".app")
 
 ##
 # Functions
 ##
 
 def parse_script_options(script_filename):
-	"""
-	Read the specified script and pull out DropScript options.
-	Options are specified on a line that begins with '# ' as the first two
-	characters, followed by the option name, followed by ':', followed by
-	the option value.
-	Note that this assumes that one can do this without breaking the syntax
-	of the script.  Since most scripting languages use '#' as to denote a
-	comment, this generally seems like a reasonable choice.
-	See the	DropScript docs	for information about avaliable options.
-	"""
-	options = {}
+        """
+        Read the specified script and pull out DropScript options.
+        Options are specified on a line that begins with '# ' as the first two
+        characters, followed by the option name, followed by ':', followed by
+        the option value.
+        Note that this assumes that one can do this without breaking the syntax
+        of the script.  Since most scripting languages use '#' as to denote a
+        comment, this generally seems like a reasonable choice.
+        See the DropScript docs for information about avaliable options.
+        """
+        options = {}
 
-	regex_option = re.compile(r'^#[ \t]*([A-Z]+)[ \t]*:[ \t]*(.*)$')
+        regex_option = re.compile(r'^#[ \t]*([A-Z]+)[ \t]*:[ \t]*(.*)$')
 
-	script_file = open(script_filename)
+        script_file = open(script_filename)
 
-	regex_comment = r'([ \t]*#.*)$'
+        regex_comment = r'([ \t]*#.*)$'
 
-	for line in script_file:
-		match = regex_option.search(line)
-		if match:
-			option = match.group(1)
-			value  = match.group(2)
+        for line in script_file:
+                match = regex_option.search(line)
+                if match:
+                        option = match.group(1)
+                        value  = match.group(2)
 
-			warning = source_script + ": WARNING: Invalid " + option + ": " + value
+                        warning = source_script + ": WARNING: Invalid " + option + ": " + value
 
-			if option == "EXTENSIONS" or option == "OSTYPES":
-				regex_extensions = re.compile(r'^("[^"]*")*' + regex_comment)
-				if regex_extensions.search(value):
-					extensions = re.sub(regex_extensions, r'\1', value)
-					options[option] = extensions
-				else: print warning
+                        if option == "EXTENSIONS" or option == "OSTYPES":
+                                regex_extensions = re.compile(r'^("[^"]*")*' + regex_comment)
+                                if regex_extensions.search(value):
+                                        extensions = re.sub(regex_extensions, r'\1', value)
+                                        options[option] = extensions
+                                else: print warning
 
-			elif option == "ROLE":
-				regex_role = re.compile(r'^([A-Za-z]+)' + regex_comment)
-				match = regex_role.search(value)
-				if match: options[option] = match.group(1)
-				else: print warning
+                        elif option == "ROLE":
+                                regex_role = re.compile(r'^([A-Za-z]+)' + regex_comment)
+                                match = regex_role.search(value)
+                                if match: options[option] = match.group(1)
+                                else: print warning
 
-			elif option == "SERVICEMENU":
-				regex_menu = re.compile(r'^(.+?)' + regex_comment)
-				match = regex_menu.search(value)
-				if match: options[option] = match.group(1)
-				else: print warning
+                        elif option == "SERVICEMENU":
+                                regex_menu = re.compile(r'^(.+?)' + regex_comment)
+                                match = regex_menu.search(value)
+                                if match: options[option] = match.group(1)
+                                else: print warning
 
-	script_file.close()
+        script_file.close()
 
-	if not  (options.has_key("ROLE") and options["ROLE"]):
-		options["ROLE"] = "Editor"
+        if not  (options.has_key("ROLE") and options["ROLE"]):
+                options["ROLE"] = "Editor"
 
-	if not  (options.has_key("SERVICEMENU") and options["SERVICEMENU"]):
-		options["SERVICEMENU"] = "DropScript/" + base_name
+        if not  (options.has_key("SERVICEMENU") and options["SERVICEMENU"]):
+                options["SERVICEMENU"] = "DropScript/" + base_name
 
-	if not ((options.has_key("EXTENSIONS") and options["EXTENSIONS"]) or
-			(options.has_key("OSTYPES"   ) and options["OSTYPES"   ])):
-		options["EXTENSIONS"] = '"*"'
-		options["OSTYPES"   ] = '"****"'
+        if not ((options.has_key("EXTENSIONS") and options["EXTENSIONS"]) or
+                        (options.has_key("OSTYPES"   ) and options["OSTYPES"   ])):
+                options["EXTENSIONS"] = '"*"'
+                options["OSTYPES"   ] = '"****"'
 
-	return options
+        return options
 
 def write_plist(plist_filename, options):
-	"""
-	Write an Info.plist file with the given options.
-	"""
-	def expand_tokens(tokens):
-		"""
-		Replace: "x" "y" ...
-		With: <string>x</string> <string>y</string> ...
-		"""
-		result = ""
-		state = False
-		for c in tokens:
-			if c == '"':
-				if state: result = result + "</string>"
-				else:     result = result + "<string>"
-				state = not state
-			else:
-				result = result + c
-		if state: raise RuntimeError("mismatched quotes in token list")
-		return result
+        """
+        Write an Info.plist file with the given options.
+        """
+        def expand_tokens(tokens):
+                """
+                Replace: "x" "y" ...
+                With: <string>x</string> <string>y</string> ...
+                """
+                result = ""
+                state = False
+                for c in tokens:
+                        if c == '"':
+                                if state: result = result + "</string>"
+                                else:     result = result + "<string>"
+                                state = not state
+                        else:
+                                result = result + c
+                if state: raise RuntimeError("mismatched quotes in token list")
+                return result
 
-	plist_file = open(plist_filename, "w")
-	plist_file.write("""<?xml version="1.0" encoding="UTF-8"?>
+        plist_file = open(plist_filename, "w")
+        plist_file.write("""<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
@@ -194,53 +194,54 @@ def write_plist(plist_filename, options):
   </dict>
 </plist>
 """)
-	plist_file.close()
+        plist_file.close()
 
 ##
 # Do The Right Thing
 ##
 
 try:
-	print "source_name:        %s" % source_name
-	print "source_app:         %s" % source_app
-	print "source_script:      %s" % source_script
-	print "new_script:         %s" % new_script
-	print "destination:        %s" % destination
-	print "droplet_name:       %s" % droplet_name
-	print "droplet_path:       %s" % droplet_path
-	print "droplet_script:     %s" % droplet_script
-	print "droplet_plist:      %s" % droplet_plist
-	print "droplet_executable: %s" % droplet_executable
+        print "source_name:        %s" % source_name
+        print "source_app:         %s" % source_app
+        print "source_script:      %s" % source_script
+        print "new_script:         %s" % new_script
+        print "destination:        %s" % destination
+        print "droplet_name:       %s" % droplet_name
+        print "droplet_path:       %s" % droplet_path
+        print "droplet_script:     %s" % droplet_script
+        print "droplet_plist:      %s" % droplet_plist
+        print "droplet_executable: %s" % droplet_executable
 
-	# Get application options from script
-	options = parse_script_options(new_script)
+        # Get application options from script
+        options = parse_script_options(new_script)
 
-	print "options: %s" % options
+        print "options: %s" % options
 
-	# Copy the primordial applet to the new applet's location
-	shutil.copytree(source_app, droplet_path)
+        # Copy the primordial applet to the new applet's location
+        shutil.copytree(source_app, droplet_path)
 
-	# Move Contents/MacOS/DropScript to Contents/MacOS/<droplet_name>
-	print "Moving %s to %s..." % (os.path.join(droplet_bindir, source_name), droplet_executable)
-	os.rename(os.path.join(droplet_bindir, source_name), droplet_executable)
+        # Move Contents/MacOS/DropScript to Contents/MacOS/<droplet_name>
+        print "Moving %s to %s..." % (os.path.join(droplet_bindir, source_name), droplet_executable)
+        os.rename(os.path.join(droplet_bindir, source_name), droplet_executable)
 
-	# Replace Contents/Resources/drop_script
-	print "Removing %s..." % droplet_script
-	os.remove(droplet_script)
-	print "Copying %s to %s..." % (new_script, droplet_script)
-	shutil.copyfile(new_script, droplet_script)
+        # Replace Contents/Resources/drop_script
+        print "Removing %s..." % droplet_script
+        os.remove(droplet_script)
+        print "Copying %s to %s..." % (new_script, droplet_script)
+        shutil.copyfile(new_script, droplet_script)
+        os.chmod(droplet_script, 0755)
 
-	# Edit Info.plist
-	print "Editing plist %s..." % droplet_plist
-	write_plist(droplet_plist, options)
+        # Edit Info.plist
+        print "Editing plist %s..." % droplet_plist
+        write_plist(droplet_plist, options)
 
-	print "Created new drop application %s." % droplet_path
+        print "Created new drop application %s." % droplet_path
 
 except Exception, e:
-	raise
+        raise
 
-	# Delete new droplet on error
-	pass
+        # Delete new droplet on error
+        pass
 
-	# Show error panel on error
-	pass
+        # Show error panel on error
+        pass
