@@ -54,5 +54,6 @@ clean:
 
 .PHONY: install
 install: all
-#	install -d "$(DSTROOT)$(INSTALL_PATH)/$(EXAMPLES_DIR)";
-#	cd "$(BUILT_PRODUCTS_DIR)" && pax -rw "$(EXAMPLES_DIR)" "$(DSTROOT)$(INSTALL_PATH)";
+	install -d "$(DSTROOT)$(INSTALL_PATH)/$(EXAMPLES_DIR)" "$(DSTROOT)$(INSTALL_PATH)/$(DROPLETS_DIR)";
+	cd "$(BUILT_PRODUCTS_DIR)" && pax -rw "$(EXAMPLES_DIR)" "$(DSTROOT)$(INSTALL_PATH)";
+	cd "$(BUILT_PRODUCTS_DIR)" && pax -rw "$(DROPLETS_DIR)" "$(DSTROOT)$(INSTALL_PATH)";
