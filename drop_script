@@ -81,7 +81,7 @@ def parse_script_options(script_filename):
             warning = "%s: WARNING: Invalid %s: %r" % (source_script, option, value)
 
             if option == "EXTENSIONS" or option == "OSTYPES":
-                regex_extensions = re.compile(r'^("[^"]*")*' + regex_comment)
+                regex_extensions = re.compile(r'^("[^"]*")+' + regex_comment)
                 if regex_extensions.search(value):
                     extensions = regex_extensions.sub(r'\1', value)
                     options[option] = extensions
