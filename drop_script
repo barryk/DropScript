@@ -16,6 +16,8 @@ import os
 import re
 import shutil
 
+debug = False
+
 ##
 # Handle command line
 ##
@@ -203,41 +205,41 @@ def write_plist(plist_filename, options):
 ##
 
 try:
-    print "source_name:    %s" % source_name
-    print "source_app:     %s" % source_app
-    print "source_script:      %s" % source_script
-    print "new_script:     %s" % new_script
-    print "destination:    %s" % destination
-    print "droplet_name:       %s" % droplet_name
-    print "droplet_path:       %s" % droplet_path
-    print "droplet_script:     %s" % droplet_script
-    print "droplet_plist:      %s" % droplet_plist
-    print "droplet_executable: %s" % droplet_executable
+    if debug: print "source_name:    %s" % source_name
+    if debug: print "source_app:     %s" % source_app
+    if debug: print "source_script:      %s" % source_script
+    if debug: print "new_script:     %s" % new_script
+    if debug: print "destination:    %s" % destination
+    if debug: print "droplet_name:       %s" % droplet_name
+    if debug: print "droplet_path:       %s" % droplet_path
+    if debug: print "droplet_script:     %s" % droplet_script
+    if debug: print "droplet_plist:      %s" % droplet_plist
+    if debug: print "droplet_executable: %s" % droplet_executable
 
     # Get application options from script
     options = parse_script_options(new_script)
 
-    print "options: %s" % options
+    if debug: print "options: %s" % options
 
     # Copy the primordial applet to the new applet's location
     shutil.copytree(source_app, droplet_path)
 
     # Move Contents/MacOS/DropScript to Contents/MacOS/<droplet_name>
-    print "Moving %s to %s..." % (os.path.join(droplet_bindir, source_name), droplet_executable)
+    if debug: print "Moving %s to %s..." % (os.path.join(droplet_bindir, source_name), droplet_executable)
     os.rename(os.path.join(droplet_bindir, source_name), droplet_executable)
 
     # Replace Contents/Resources/drop_script
-    print "Removing %s..." % droplet_script
+    if debug: print "Removing %s..." % droplet_script
     os.remove(droplet_script)
-    print "Copying %s to %s..." % (new_script, droplet_script)
+    if debug: print "Copying %s to %s..." % (new_script, droplet_script)
     shutil.copyfile(new_script, droplet_script)
     os.chmod(droplet_script, 0755)
 
     # Edit Info.plist
-    print "Editing plist %s..." % droplet_plist
+    if debug: print "Editing plist %s..." % droplet_plist
     write_plist(droplet_plist, options)
 
-    print "Created new drop application %s." % droplet_path
+    if debug: print "Created new drop application %s." % droplet_path
 
 except Exception, e:
     raise
