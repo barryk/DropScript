@@ -18,26 +18,31 @@ import shutil
 # Handle command line
 ##
 
-drop_script = sys.argv[0]
+source_script = sys.argv[0]
 
 if len(sys.argv) != 2:
-	print os.path.split(drop_script)[1] + " takes exactly one argument"
+	print os.path.split(source_script)[1] + " takes exactly one argument"
 	sys.exit(1)
 
 new_script  = sys.argv[1]
 
-source_app   = os.path.split(os.path.split(os.path.split(drop_script)[0])[0])[0]
-destination  = os.path.split(new_script)[0]
-base_name    = os.path.split(os.path.splitext(new_script)[0])[1]
-droplet_name = "Drop" + base_name
-droplet_path = os.path.join(destination, droplet_name + ".app")
+source_app         = os.path.split(os.path.split(os.path.split(source_script)[0])[0])[0]
+source_name        = os.path.splitext(os.path.split(source_app)[1])[0]
+destination        = os.path.split(new_script)[0]
+base_name          = os.path.split(os.path.splitext(new_script)[0])[1]
+droplet_name       = "Drop" + base_name
+droplet_path       = os.path.join(destination, droplet_name + ".app")
+droplet_contents   = os.path.join(droplet_path, "Contents")
+droplet_bindir     = os.path.join(droplet_contents, "MacOS")
+droplet_executable = os.path.join(droplet_bindir, droplet_name)
+droplet_resources  = os.path.join(droplet_contents, "Resources")
+droplet_script     = os.path.join(droplet_resources, "drop_script")
 
-if os.path.exists(droplet_path):
-	i = 0
-	while (os.path.exists(droplet_path)):
-		i += 1
-		droplet_name = "Drop" + base_name + "-" + str(i)
-		droplet_path = os.path.join(destination, droplet_name + ".app")
+i = 0
+while (os.path.exists(droplet_path)):
+	i += 1
+	droplet_name = "Drop" + base_name + "-" + str(i)
+	droplet_path = os.path.join(destination, droplet_name + ".app")
 
 ##
 # Functions
@@ -68,7 +73,7 @@ def parse_script_options(script_filename):
 			option = match.group(1)
 			value  = match.group(2)
 
-			warning = drop_script + ": WARNING: Invalid " + option + ": " + value
+			warning = source_script + ": WARNING: Invalid " + option + ": " + value
 
 			if option == "EXTENSIONS" or option == "OSTYPES":
 				regex_extensions = re.compile(r'^("[^"]*")*' + regex_comment)
@@ -108,25 +113,49 @@ def parse_script_options(script_filename):
 # Do The Right Thing
 ##
 
-print "source_app:   " + source_app
-print "drop_script:  " + drop_script
-print "new_script:   " + new_script
-print "destination:  " + destination
-print "droplet_name: " + droplet_name
-print "droplet_path: " + droplet_path
+try:
+	print "source_name:        %s" % source_name
+	print "source_app:         %s" % source_app
+	print "source_script:      %s" % source_script
+	print "new_script:         %s" % new_script
+	print "destination:        %s" % destination
+	print "droplet_name:       %s" % droplet_name
+	print "droplet_path:       %s" % droplet_path
+	print "droplet_script:     %s" % droplet_script
+	print "droplet_executable: %s" % droplet_executable
 
-options = parse_script_options(new_script)
+	# Get application options from script
+	options = parse_script_options(new_script)
 
-print "options: " + str(options)
+	print "options: %s" % options
 
-shutil.copytree(source_app, droplet_path)
+	# Copy the primordial applet to the new applet's location
+	shutil.copytree(source_app, droplet_path)
 
-# Move Contents/MacOS/DropScript to Contents/MacOS/<droplet_name>
-# Replace Contents/Resources/drop_script
-# Edit info.plist to reflect options
+	# Move Contents/MacOS/DropScript to Contents/MacOS/<droplet_name>
+	print "Moving %s to %s..." % (os.path.join(droplet_bindir, source_name), droplet_executable)
+	os.rename(os.path.join(droplet_bindir, source_name), droplet_executable)
 
-#extensions = re.sub(r'"([^"]*)"' , r'<string>\1</string>', extensions)
+	# Replace Contents/Resources/drop_script
+	print "Removing %s..." % droplet_script
+	os.remove(droplet_script)
+	print "Copying %s to %s..." % (new_script, droplet_script)
+	shutil.copyfile(new_script, droplet_script)
 
-# Delete new droplet on error
+	# Edit info.plist
+	#  - reflect options
+	#    - CFBundleDocumentTypes
+	#    - CFBundleTypeRole
+	#    - Services
+	# - CFBundleExecutable
+	# - CFBundleIdentifier
+	pass
 
-# Show error panel on error
+except Exception, e:
+	raise
+
+	# Delete new droplet on error
+	pass
+
+	# Show error panel on error
+	pass
