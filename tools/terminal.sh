@@ -194,8 +194,8 @@ while [ $# != 0 ]; do
     --origin)
       where="$2"; shift 2;
          T_WhereFromTop="";
-      T_WhereFromBottom=$(echo "${where}" | sed 's/^\([0-9]*\)x\([0-9]*\).*$/\1/');
-        T_WhereFromLeft=$(echo "${where}" | sed 's/^\([0-9]*\)x\([0-9]*\).*$/\2/');
+      T_WhereFromBottom=$(echo "${where}" | sed 's/^\([-0-9][0-9]*\)x\([-0-9][0-9]*\).*$/\1/');
+        T_WhereFromLeft=$(echo "${where}" | sed 's/^\([-0-9][0-9]*\)x\([-0-9][0-9]*\).*$/\2/');
       if ! ( [ "${T_WhereFromBottom}" -ge 0 ] || [ "${T_WhereFromBottom}" -lt 0 ] ) &&
          ! ( [ "${T_WhereFromLeft}"   -ge 0 ] || [ "${T_WhereFromLeft}"   -lt 0 ] ); then
         usage "Invalid position: ${T_WhereFromBottom} x ${T_WhereFromLeft}";
