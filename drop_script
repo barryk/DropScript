@@ -70,7 +70,7 @@ def parse_script_options(script_filename):
 
     script_file = open(script_filename)
 
-    regex_comment = r'([ \t]*#.*)$'
+    regex_comment = r'([ \t]*#.*)?$'
 
     for line in script_file:
         match = regex_option.search(line)
@@ -78,7 +78,7 @@ def parse_script_options(script_filename):
             option = match.group(1)
             value  = match.group(2)
 
-            warning = "%s: WARNING: Invalid %s: %s" % (source_script, option, value)
+            warning = "%s: WARNING: Invalid %s: %r" % (source_script, option, value)
 
             if option == "EXTENSIONS" or option == "OSTYPES":
                 regex_extensions = re.compile(r'^("[^"]*")*' + regex_comment)
