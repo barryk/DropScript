@@ -85,6 +85,7 @@ def parse_script_options(script_filename):
                 if regex_extensions.search(value):
                     extensions = regex_extensions.sub(r'\1', value)
                     options[option] = extensions
+                elif re.search(regex_comment, value): pass
                 else: print warning
 
             elif option == "ROLE":
@@ -99,16 +100,19 @@ def parse_script_options(script_filename):
 
     script_file.close()
 
-    if not  ("ROLE" in options and options["ROLE"]):
+    if not ("ROLE" in options and options["ROLE"]):
         options["ROLE"] = "Editor"
 
-    if not  ("SERVICEMENU" in options and options["SERVICEMENU"]):
+    if not ("SERVICEMENU" in options and options["SERVICEMENU"]):
         options["SERVICEMENU"] = "DropScript/" + base_name
 
-    if not (("EXTENSIONS" in options and options["EXTENSIONS"]) or
-        ("OSTYPES"    in options and options["OSTYPES"   ])):
+    if (not ("EXTENSIONS" in options and options["EXTENSIONS"]) and
+        not ("OSTYPES"    in options and options["OSTYPES"   ]) ):
         options["EXTENSIONS"] = '"*"'
         options["OSTYPES"   ] = '"****"'
+    else:
+        if not "EXTENSIONS" in options: options["EXTENSIONS"] = ""
+        if not "OSTYPES"    in options: options["OSTYPES"   ] = ""
 
     return options
 
