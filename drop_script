@@ -37,6 +37,7 @@ droplet_bindir     = os.path.join(droplet_contents, "MacOS")
 droplet_executable = os.path.join(droplet_bindir, droplet_name)
 droplet_resources  = os.path.join(droplet_contents, "Resources")
 droplet_script     = os.path.join(droplet_resources, "drop_script")
+droplet_plist      = os.path.join(droplet_contents, "Info.plist")
 
 i = 0
 while (os.path.exists(droplet_path)):
@@ -63,7 +64,7 @@ def parse_script_options(script_filename):
 
 	regex_option = re.compile(r'^#[ \t]*([A-Z]+)[ \t]*:[ \t]*(.*)$')
 
-	script_file = file(script_filename)
+	script_file = open(script_filename)
 
 	regex_comment = r'([ \t]*#.*)$'
 
@@ -109,6 +110,92 @@ def parse_script_options(script_filename):
 
 	return options
 
+def write_plist(plist_filename, options):
+	"""
+	Write an Info.plist file with the given options.
+	"""
+	def expand_tokens(tokens):
+		"""
+		Replace: "x" "y" ...
+		With: <string>x</string> <string>y</string> ...
+		"""
+		result = ""
+		state = False
+		for c in tokens:
+			if c == '"':
+				if state: result = result + "</string>"
+				else:     result = result + "<string>"
+				state = not state
+			else:
+				result = result + c
+		if state: raise RuntimeError("mismatched quotes in token list")
+		return result
+
+	plist_file = open(plist_filename, "w")
+	plist_file.write("""<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>English</string>
+    <key>CFBundleDocumentTypes</key>
+    <array>
+      <dict>
+        <key>CFBundleTypeExtensions</key>
+        <array>
+          """ + expand_tokens(options["EXTENSIONS"]) + """
+        </array>
+        <key>CFBundleTypeName</key>
+        <string>NSStringPboardType</string>
+        <key>CFBundleTypeOSTypes</key>
+        <array>
+          """ + expand_tokens(options["OSTYPES"]) + """
+        </array>
+        <key>CFBundleTypeRole</key>
+        <string>""" + options["ROLE"] + """</string>
+      </dict>
+    </array>
+    <key>CFBundleExecutable</key>
+    <string>""" + droplet_name + """</string>
+    <key>CFBundleIconFile</key>
+    <string>DropScript.icns</string>
+    <key>CFBundleIdentifier</key>
+    <string>net.wsanchez.DropScript.""" + droplet_name + """</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>CFBundleVersion</key>
+    <string>0.0</string>
+    <key>NSMainNibFile</key>
+    <string>MainMenu</string>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+    <key>NSServices</key>
+    <array>
+      <dict>
+        <key>NSMenuItem</key>
+        <dict>
+          <key>default</key>
+          <string>""" + options["SERVICEMENU"] + """</string>
+        </dict>
+        <key>NSMessage</key>
+        <string>dropService</string>
+        <key>NSPortName</key>
+        <string>DropScript</string>
+        <key>NSSendTypes</key>
+        <array>
+          <string>NSFilenamesPboardType</string>
+        </array>
+      </dict>
+    </array>
+  </dict>
+</plist>
+""")
+	plist_file.close()
+
 ##
 # Do The Right Thing
 ##
@@ -122,6 +209,7 @@ try:
 	print "droplet_name:       %s" % droplet_name
 	print "droplet_path:       %s" % droplet_path
 	print "droplet_script:     %s" % droplet_script
+	print "droplet_plist:      %s" % droplet_plist
 	print "droplet_executable: %s" % droplet_executable
 
 	# Get application options from script
@@ -142,14 +230,11 @@ try:
 	print "Copying %s to %s..." % (new_script, droplet_script)
 	shutil.copyfile(new_script, droplet_script)
 
-	# Edit info.plist
-	#  - reflect options
-	#    - CFBundleDocumentTypes
-	#    - CFBundleTypeRole
-	#    - Services
-	# - CFBundleExecutable
-	# - CFBundleIdentifier
-	pass
+	# Edit Info.plist
+	print "Editing plist %s..." % droplet_plist
+	write_plist(droplet_plist, options)
+
+	print "Created new drop application %s." % droplet_path
 
 except Exception, e:
 	raise
