@@ -1,0 +1,132 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+##
+# drop_script
+# DropScript droplet generation script
+#
+# Created by Wilfredo Sánchez on Sun May 02 2004.
+# Copyright (c) 2004 Wilfredo Sánchez Vega. All rights reserved.
+##
+
+import sys
+import os
+import re
+import shutil
+
+##
+# Handle command line
+##
+
+drop_script = sys.argv[0]
+
+if len(sys.argv) != 2:
+	print os.path.split(drop_script)[1] + " takes exactly one argument"
+	sys.exit(1)
+
+new_script  = sys.argv[1]
+
+source_app   = os.path.split(os.path.split(os.path.split(drop_script)[0])[0])[0]
+destination  = os.path.split(new_script)[0]
+base_name    = os.path.split(os.path.splitext(new_script)[0])[1]
+droplet_name = "Drop" + base_name
+droplet_path = os.path.join(destination, droplet_name + ".app")
+
+if os.path.exists(droplet_path):
+	i = 0
+	while (os.path.exists(droplet_path)):
+		i += 1
+		droplet_name = "Drop" + base_name + "-" + str(i)
+		droplet_path = os.path.join(destination, droplet_name + ".app")
+
+##
+# Functions
+##
+
+def parse_script_options(script_filename):
+	"""
+	Read the specified script and pull out DropScript options.
+	Options are specified on a line that begins with '# ' as the first two
+	characters, followed by the option name, followed by ':', followed by
+	the option value.
+	Note that this assumes that one can do this without breaking the syntax
+	of the script.  Since most scripting languages use '#' as to denote a
+	comment, this generally seems like a reasonable choice.
+	See the	DropScript docs	for information about avaliable options.
+	"""
+	options = {}
+
+	regex_option = re.compile(r'^#[ \t]*([A-Z]+)[ \t]*:[ \t]*(.*)$')
+
+	script_file = file(script_filename)
+
+	regex_comment = r'([ \t]*#.*)$'
+
+	for line in script_file:
+		match = regex_option.search(line)
+		if match:
+			option = match.group(1)
+			value  = match.group(2)
+
+			warning = drop_script + ": WARNING: Invalid " + option + ": " + value
+
+			if option == "EXTENSIONS" or option == "OSTYPES":
+				regex_extensions = re.compile(r'^("[^"]*")*' + regex_comment)
+				if regex_extensions.search(value):
+					extensions = re.sub(regex_extensions, r'\1', value)
+					options[option] = extensions
+				else: print warning
+
+			elif option == "ROLE":
+				regex_role = re.compile(r'^([A-Za-z]+)' + regex_comment)
+				match = regex_role.search(value)
+				if match: options[option] = match.group(1)
+				else: print warning
+
+			elif option == "SERVICEMENU":
+				regex_menu = re.compile(r'^(.+?)' + regex_comment)
+				match = regex_menu.search(value)
+				if match: options[option] = match.group(1)
+				else: print warning
+
+	script_file.close()
+
+	if not  (options.has_key("ROLE") and options["ROLE"]):
+		options["ROLE"] = "Editor"
+
+	if not  (options.has_key("SERVICEMENU") and options["SERVICEMENU"]):
+		options["SERVICEMENU"] = "DropScript/" + base_name
+
+	if not ((options.has_key("EXTENSIONS") and options["EXTENSIONS"]) or
+			(options.has_key("OSTYPES"   ) and options["OSTYPES"   ])):
+		options["EXTENSIONS"] = '"*"'
+		options["OSTYPES"   ] = '"****"'
+
+	return options
+
+##
+# Do The Right Thing
+##
+
+print "source_app:   " + source_app
+print "drop_script:  " + drop_script
+print "new_script:   " + new_script
+print "destination:  " + destination
+print "droplet_name: " + droplet_name
+print "droplet_path: " + droplet_path
+
+options = parse_script_options(new_script)
+
+print "options: " + str(options)
+
+shutil.copytree(source_app, droplet_path)
+
+# Move Contents/MacOS/DropScript to Contents/MacOS/<droplet_name>
+# Replace Contents/Resources/drop_script
+# Edit info.plist to reflect options
+
+#extensions = re.sub(r'"([^"]*)"' , r'<string>\1</string>', extensions)
+
+# Delete new droplet on error
+
+# Show error panel on error
