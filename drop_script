@@ -83,19 +83,17 @@ def parse_script_options(script_filename):
             if option == "EXTENSIONS" or option == "OSTYPES":
                 regex_extensions = re.compile(r'^("[^"]*")*' + regex_comment)
                 if regex_extensions.search(value):
-                    extensions = re.sub(regex_extensions, r'\1', value)
+                    extensions = regex_extensions.sub(r'\1', value)
                     options[option] = extensions
                 else: print warning
 
             elif option == "ROLE":
-                regex_role = re.compile(r'^([A-Za-z]+)' + regex_comment)
-                match = regex_role.search(value)
+                match = re.search(r'^([A-Za-z]+)' + regex_comment, value)
                 if match: options[option] = match.group(1)
                 else: print warning
 
             elif option == "SERVICEMENU":
-                regex_menu = re.compile(r'^(.+?)' + regex_comment)
-                match = regex_menu.search(value)
+                match = re.search(r'^(.+?)' + regex_comment, value)
                 if match: options[option] = match.group(1)
                 else: print warning
 
