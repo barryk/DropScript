@@ -23,7 +23,7 @@
 
 # EXTENSIONS  : 				# Accepted file extentions
 # OSTYPES     : "fold"				# Accepted file types
-# ROLE        : Editor				# Role (Editor, Viewer, None)
+# ROLE        : Viewer				# Role (Editor, Viewer, None)
 # SERVICEMENU : Terminal/New Shell Here		# Name of Service menu item
 
 Destination="$1";
