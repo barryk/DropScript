@@ -100,6 +100,7 @@ usage ()
   echo "options:";
   echo "    --help               print this help";
   echo "    --version            print Terminal's version number";
+  echo "    --current		 change the current window instead of creating a new one";
   echo "    --isfrontmost        print whether Terminal is the frontmost app";
   echo "    --activate           activate Terminal (bring to front)";
   echo "    --size WxH           set window size in pixels";
@@ -139,6 +140,7 @@ T_BackgroundColor="";
       T_TextColor="";
   T_BoldTextColor="";
     T_CursorColor="";
+     T_UseCurrent="";
 
 # Process arguments
 while [ $# != 0 ]; do
@@ -227,6 +229,10 @@ while [ $# != 0 ]; do
       tell Terminal to "$@";
       exit 0;
       ;;
+    --current|-c)
+      shift;
+      T_UseCurrent="true";
+      ;; 
     *)
       usage "Invalid argument: $1"; shift;
       exit 1;
@@ -242,8 +248,10 @@ done;
 #tell Terminal to do script \"${T_Command}\" >/dev/null; #"
 #CommandWindow=$(tell Terminal to get its front window);
 #
-# Use tell_queue for speed.  But then we reply on the front window staying in front.
-tell_queue Terminal to do script \"${T_Command}\" #"
+# Use tell_queue for speed.  But then we rely on the front window staying in front.
+if [ ! "${T_UseCurrent}" ]; then
+  tell_queue Terminal to do script \"${T_Command}\" #"
+fi;
 CommandWindow="its front window";
 
 if [ -z "${CommandWindow}" ]; then
