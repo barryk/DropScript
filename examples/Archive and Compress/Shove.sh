@@ -3,7 +3,7 @@
 # Shove.sh - part of the ShoveIt Deluxe (tm) Suite.
 # Package a set of files into a POSIX tar archive and compress the result
 #
-# Wilfredo Sanchez | wsanchez@opensource.apple.com
+# Wilfredo Sanchez | wsanchez@wsanchez.net
 # Copyright (c) 2001-2002 Wilfredo Sanchez Vega.
 # All rights reserved.
 #

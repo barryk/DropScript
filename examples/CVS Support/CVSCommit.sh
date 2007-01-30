@@ -3,7 +3,7 @@
 ##
 # Commit items to a CVS repository
 #
-# Wilfredo Sanchez | wsanchez@opensource.apple.com
+# Wilfredo Sanchez | wsanchez@wsanchez.net
 # Copyright (c) 2002 Wilfredo Sanchez Vega.
 # All rights reserved.
 #

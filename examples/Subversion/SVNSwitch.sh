@@ -3,7 +3,7 @@
 ##
 # Switch between repositories in a Subversion in a working copy
 #
-# Wilfredo Sanchez | wsanchez@opensource.apple.com
+# Wilfredo Sanchez | wsanchez@wsanchez.net
 # Copyright (c) 2002 Wilfredo Sanchez Vega.
 # All rights reserved.
 #

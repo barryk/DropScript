@@ -2,7 +2,7 @@
 ##
 # Open a terminal window and change directory to a folder
 #
-# Wilfredo Sanchez | wsanchez@opensource.apple.com
+# Wilfredo Sanchez | wsanchez@wsanchez.net
 # Copyright (c) 2001-2002 Wilfredo Sanchez Vega.
 # All rights reserved.
 #

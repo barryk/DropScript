@@ -3,7 +3,7 @@
 ##
 # View changes in a CVS working copy
 #
-# Wilfredo Sanchez | wsanchez@opensource.apple.com
+# Wilfredo Sanchez | wsanchez@wsanchez.net
 # Copyright (c) 2002 Wilfredo Sanchez Vega.
 # All rights reserved.
 #

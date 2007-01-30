@@ -3,7 +3,7 @@
 # UnShove.sh - part of the ShoveIt Deluxe (tm) Suite.
 # Uncompress and unpack file archives of various formats
 #
-# Wilfredo Sanchez | wsanchez@opensource.apple.com
+# Wilfredo Sanchez | wsanchez@wsanchez.net
 # Copyright (c) 2001-2002 Wilfredo Sanchez Vega.
 # All rights reserved.
 #

@@ -1,6 +1,6 @@
 ##
 # Makefile for DropScript examples
-# Wilfredo Sanchez | wsanchez@opensource.apple.com
+# Wilfredo Sanchez | wsanchez@wsanchez.net
 ##
 
 # When invoked by XCode, these should be set
