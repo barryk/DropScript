@@ -62,14 +62,26 @@ do_tell_queue ()
 
 set_bool ()
 {
-  variable="$1"; bool="$2";
+  variable="$1"; value="$2";
 
-  if ! ( [ "${bool}" = "true" ] || [ "${bool}" = "false" ] ); then
-    usage "Invalid boolean: ${bool}";
+  if ! ( [ "${value}" = "true" ] || [ "${value}" = "false" ] ); then
+    usage "Invalid boolean: ${value}";
     exit 1;
   fi;
 
-  eval "${variable}='${bool}'";
+  eval "${variable}='${value}'";
+}
+
+set_int ()
+{
+  variable="$1"; value="$2";
+
+  if ! test 0 -lt "${value}" > /dev/null 2>&1; then
+    usage "Invalid integer value: ${value}";
+    exit 1;
+  fi;
+
+  eval "${variable}='${value}'";
 }
 
 set_value ()
@@ -109,6 +121,8 @@ usage ()
   echo "    --origin XxY         set window screen position relative to bottom left corner";
   echo "    --miniaturized bool  miniaturize window";
   echo "    --title name         set window title; implies \"--showtitle true\"";
+  echo "    --font name          set font";
+  echo "    --fontsize N         set font size to N";
   echo "    --bgcolor color      set window background color";
   echo "    --textcolor color    set window text color";
   echo "    --boldcolor color    set window bold text color";
@@ -136,6 +150,8 @@ T_WhereFromBottom="";
        T_ShowFile="";
       T_ShowTitle="";
           T_Title="";
+       T_FontName="";
+       T_FontSize="";
 T_BackgroundColor="";
       T_TextColor="";
   T_BoldTextColor="";
@@ -209,6 +225,8 @@ while [ $# != 0 ]; do
       T_Title="$1"; shift;
       T_ShowTitle="true";
       ;;
+    --font)         set_value T_FontName        "$2"; shift 2; ;;
+    --fontsize)     set_int   T_FontSize        "$2"; shift 2; ;;
     --bgcolor)      set_value T_BackgroundColor "$2"; shift 2; ;;
     --textcolor)    set_value T_TextColor       "$2"; shift 2; ;;
     --boldcolor)    set_value T_BoldTextColor   "$2"; shift 2; ;;
@@ -250,7 +268,7 @@ done;
 #
 # Use tell_queue for speed.  But then we rely on the front window staying in front.
 if [ ! "${T_UseCurrent}" ]; then
-  tell_queue Terminal to do script \"${T_Command}\" #"
+  tell_queue Terminal to do script \"${T_Command}\";
 fi;
 CommandWindow="its front window";
 
@@ -260,6 +278,7 @@ if [ -z "${CommandWindow}" ]; then
 fi;
 
 set_window () { tell_queue Terminal to tell "${CommandWindow}" to set its "$@"; }
+set_tab    () { tell_queue Terminal to tell "${CommandWindow}" to tell its selected tab to set its "$@"; }
 
 if [ -n "${T_Width}" ] && [ -n "${T_Height}" ]; then
   set_window size to '(' "${T_Width}" , "${T_Height}" ')';
@@ -278,12 +297,15 @@ if [ -n "${T_WhereFromBottom}" ] && [ -n "${T_WhereFromLeft}" ]; then
   set_window origin to '(' "${T_WhereFromBottom}" , "${T_WhereFromLeft}" ')';
 fi;
 
-[ -n "${T_Title}" ] && set_window custom title to \""${T_Title}"\"; #"
+[ -n "${T_Title}" ] && set_window custom title to \""${T_Title}"\";
 
-[ -n "${T_BackgroundColor}" ] && set_window background  color to \""${T_BackgroundColor}"\"; #"
-[ -n "${T_TextColor}"       ] && set_window normal text color to \""${T_TextColor}"\"      ; #"
-[ -n "${T_BoldTextColor}"   ] && set_window bold text   color to \""${T_BoldTextColor}"\"  ; #"
-[ -n "${T_CursorColor}"     ] && set_window cursor      color to \""${T_CursorColor}"\"    ; #"
+[ -n "${T_FontName}" ] && set_tab font name to \""${T_FontName}"\";
+[ -n "${T_FontSize}" ] && set_tab font size to \""${T_FontSize}"\";
+
+[ -n "${T_BackgroundColor}" ] && set_window background  color to \""${T_BackgroundColor}"\";
+[ -n "${T_TextColor}"       ] && set_window normal text color to \""${T_TextColor}"\"      ;
+[ -n "${T_BoldTextColor}"   ] && set_window bold text   color to \""${T_BoldTextColor}"\"  ;
+[ -n "${T_CursorColor}"     ] && set_window cursor      color to \""${T_CursorColor}"\"    ;
 
 [ -n "${T_ShowDevice}" ] && set_window title displays device name  to "${T_ShowDevice}";
 [ -n "${T_ShowShell}"  ] && set_window title displays shell path   to "${T_ShowShell}" ;
