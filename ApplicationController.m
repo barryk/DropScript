@@ -125,7 +125,7 @@
 	else
     {
 		*anError = @"Unknown data type in pasteboard.";
-		NSLog(@"Service invoked with no valid pasteboard data.");
+		NSLog(@"Service invoked with no valid pasteboard data.", 0);
     }
 }
 
