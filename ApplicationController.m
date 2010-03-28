@@ -18,29 +18,29 @@
 
 - (id) init
 {
-	if ((self = [super init]))
+    if ((self = [super init]))
     {
-		myAppIsLaunching             = YES;
-		myAppWasLaunchedWithDocument = NO;
-		myScriptFilename             = [[[NSBundle mainBundle] pathForResource:@"drop_script" ofType:nil] retain];
-		
-		if (!myScriptFilename)
+        myAppIsLaunching             = YES;
+        myAppWasLaunchedWithDocument = NO;
+        myScriptFilename             = [[[NSBundle mainBundle] pathForResource:@"drop_script" ofType:nil] retain];
+        
+        if (!myScriptFilename)
         {
-			NSRunAlertPanel(@"Error", @"Missing script.", @"Bummer", nil, nil);
-			[NSApp terminate: self];
+            NSRunAlertPanel(@"Error", @"Missing script.", @"Bummer", nil, nil);
+            [NSApp terminate: self];
         }
-		
-		// Provide application services
-		[NSApp setServicesProvider: self];
+        
+        // Provide application services
+        [NSApp setServicesProvider: self];
     }
-	return self;
+    return self;
 }
 
 - (void) dealloc
 {
-	[myScriptFilename release];
-	
-	[super dealloc];
+    [myScriptFilename release];
+    
+    [super dealloc];
 }
 
 /**
@@ -49,8 +49,8 @@
 
 - (void) runScriptWithArguments: (NSArray*) anArguments
 {
-	[NSTask launchedTaskWithLaunchPath: myScriptFilename
-							 arguments: anArguments];
+    [NSTask launchedTaskWithLaunchPath: myScriptFilename
+                             arguments: anArguments];
 }
 
 /**
@@ -59,15 +59,15 @@
 
 - (IBAction) open: (id) aSender
 {
-	NSOpenPanel* anOpenPanel = [NSOpenPanel openPanel];
-	
-	[anOpenPanel setCanChooseFiles         : YES];
-	[anOpenPanel setCanChooseDirectories   : YES];
-	[anOpenPanel setAllowsMultipleSelection: YES];
-	
-	if ([anOpenPanel runModalForTypes:nil] == NSOKButton)
+    NSOpenPanel* anOpenPanel = [NSOpenPanel openPanel];
+    
+    [anOpenPanel setCanChooseFiles         : YES];
+    [anOpenPanel setCanChooseDirectories   : YES];
+    [anOpenPanel setAllowsMultipleSelection: YES];
+    
+    if ([anOpenPanel runModalForTypes:nil] == NSOKButton)
     {
-		[self runScriptWithArguments: [anOpenPanel filenames]];
+        [self runScriptWithArguments: [anOpenPanel filenames]];
     }
 }
 
@@ -76,33 +76,33 @@
  **/
 
 - (BOOL) application: (NSApplication*) anApplication
-			openFile: (NSString*     ) aFileName
+            openFile: (NSString*     ) aFileName
 {
-	if (myAppIsLaunching) myAppWasLaunchedWithDocument = YES;
-	
-	if (myFilesToBatch == nil)
-	{
-		myFilesToBatch = [[NSMutableArray alloc] init];
-		[self performSelector: @selector(_delayedOpenFile:) withObject: nil afterDelay: 0];
-	}
-	
-	[myFilesToBatch addObject: aFileName];
-	
-	return YES;
+    if (myAppIsLaunching) myAppWasLaunchedWithDocument = YES;
+    
+    if (myFilesToBatch == nil)
+    {
+        myFilesToBatch = [[NSMutableArray alloc] init];
+        [self performSelector: @selector(_delayedOpenFile:) withObject: nil afterDelay: 0];
+    }
+    
+    [myFilesToBatch addObject: aFileName];
+    
+    return YES;
 }
 
 - (void) _delayedOpenFile: (id) anObject
 {
-	[self runScriptWithArguments: myFilesToBatch];
-	[myFilesToBatch release];
-	myFilesToBatch = nil;
-	
-	if (myAppWasLaunchedWithDocument) [NSApp terminate: self];
+    [self runScriptWithArguments: myFilesToBatch];
+    [myFilesToBatch release];
+    myFilesToBatch = nil;
+    
+    if (myAppWasLaunchedWithDocument) [NSApp terminate: self];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification*) aNotification
 {
-	myAppIsLaunching = NO;
+    myAppIsLaunching = NO;
 }
 
 /**
@@ -113,19 +113,19 @@
             userData: (NSString*    ) aUserData
                error: (NSString**   ) anError
 {
-	NSArray* aTypes = [aPasteBoard types];
-	
-	id aData = nil;
-	
-	if ([aTypes containsObject: NSFilenamesPboardType] &&
-		(aData = [aPasteBoard propertyListForType: NSFilenamesPboardType]))
+    NSArray* aTypes = [aPasteBoard types];
+    
+    id aData = nil;
+    
+    if ([aTypes containsObject: NSFilenamesPboardType] &&
+        (aData = [aPasteBoard propertyListForType: NSFilenamesPboardType]))
     {
-		[self runScriptWithArguments: aData];
+        [self runScriptWithArguments: aData];
     }
-	else
+    else
     {
-		*anError = @"Unknown data type in pasteboard.";
-		NSLog(@"Service invoked with no valid pasteboard data.", 0);
+        *anError = @"Unknown data type in pasteboard.";
+        NSLog(@"Service invoked with no valid pasteboard data.", 0);
     }
 }
 

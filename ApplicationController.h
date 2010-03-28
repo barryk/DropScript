@@ -18,10 +18,10 @@
 /* Instance variables */
 {
 @private
-	BOOL            myAppIsLaunching;
-	BOOL            myAppWasLaunchedWithDocument;
-	NSString*       myScriptFilename;
-	NSMutableArray* myFilesToBatch;
+    BOOL            myAppIsLaunching;
+    BOOL            myAppWasLaunchedWithDocument;
+    NSString*       myScriptFilename;
+    NSMutableArray* myFilesToBatch;
 }
 
 /**
