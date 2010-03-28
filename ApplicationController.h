@@ -36,4 +36,7 @@
 
 - (IBAction) open: (id) aSender;
 
+- (void)handleURIEvent:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent;
+
+
 @end

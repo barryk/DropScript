@@ -31,7 +31,14 @@
         }
         
         // Provide application services
+        // From http://stackoverflow.com/questions/49510/how-do-you-set-your-cocoa-application-as-the-default-web-browser
         [NSApp setServicesProvider: self];
+        NSAppleEventManager *em = [NSAppleEventManager sharedAppleEventManager];
+        [em
+         setEventHandler:self
+         andSelector:@selector(handleURIEvent:withReplyEvent:)
+         forEventClass:kInternetEventClass
+         andEventID:kAEGetURL];
     }
     return self;
 }
@@ -127,6 +134,16 @@
         *anError = @"Unknown data type in pasteboard.";
         NSLog(@"Service invoked with no valid pasteboard data.", 0);
     }
+}
+
+- (void)handleURIEvent:(NSAppleEventDescriptor *)event
+        withReplyEvent:(NSAppleEventDescriptor *)replyEvent
+{
+    NSString *urlStr = [[event paramDescriptorForKeyword:keyDirectObject]
+                        stringValue];
+    NSMutableArray *urls = [[NSMutableArray alloc] init];
+    [urls addObject: urlStr];
+    [self runScriptWithArguments: urls];
 }
 
 @end
