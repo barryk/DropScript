@@ -141,7 +141,7 @@
 {
     NSString *urlStr = [[event paramDescriptorForKeyword:keyDirectObject]
                         stringValue];
-    NSMutableArray *urls = [[NSMutableArray alloc] init];
+    NSMutableArray *urls = [[[NSMutableArray alloc] init] autorelease];
     [urls addObject: urlStr];
     [self runScriptWithArguments: urls];
 }
