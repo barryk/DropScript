@@ -132,7 +132,7 @@
     else
     {
         *anError = @"Unknown data type in pasteboard.";
-        NSLog(@"Service invoked with no valid pasteboard data.", 0);
+        NSLog(@"Service invoked with no valid pasteboard data.");
     }
 }
 
@@ -141,7 +141,7 @@
 {
     NSString *urlStr = [[event paramDescriptorForKeyword:keyDirectObject]
                         stringValue];
-    NSMutableArray *urls = [[NSMutableArray alloc] init];
+    NSMutableArray *urls = [[[NSMutableArray alloc] init] autorelease];
     [urls addObject: urlStr];
     [self runScriptWithArguments: urls];
 }
